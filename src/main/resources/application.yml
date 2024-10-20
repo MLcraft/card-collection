@@ -14,3 +14,47 @@ spring:
     init:
       mode: always
 #      schema-locations: classpath:db/migration/V1__initialize_tables.sql
+---
+spring:
+  cloud:
+    function:
+      definition: cardDataReceiver
+---
+spring:
+  cloud:
+    stream:
+      function:
+        bindings:
+          cardDataReceiver-in-0: card-data-receiver-in-0
+          cardDataProducer-out-0: card-data-producer-out-0
+      rabbit:
+        bindings:
+          card-data-receiver-in-0:
+            consumer:
+              auto-bind-dlq: true
+              republish-to-dlq: true
+          card-data-producer-out-0:
+            producer:
+              routing-key-expression: headers['X-RoutingKey']
+      binders:
+        docker-rabbit:
+          type: rabbit
+          environment:
+            spring:
+              rabbitmq:
+                host: rabbitmq
+                port: 5672
+                username: rabbitadmin
+                password: rabbitpassword
+                virtual-host: cardcollection_broker
+      bindings:
+        card-data-receiver-in-0:
+          binder: docker-rabbit
+          content-type: application/json
+          destination: scryfall-card-data-message-exchange
+          group: scryfall-card-data-message-queue
+        card-data-producer-out-0:
+          binder: docker-rabbit
+          content-type: application/json
+          destination: scryfall-card-data-message-exchange
+          group: scryfall-card-data-message-queue

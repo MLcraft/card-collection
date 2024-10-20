@@ -12,6 +12,19 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+  rabbitmq:
+    image: 'rabbitmq:3-management'
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ./src/main/resources/rabbitmq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config
+      - ./src/main/resources/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 10s
+      retries: 5
   redis:
     image: 'redis:latest'
     ports:
@@ -22,4 +35,6 @@ services:
       - "8080:8080"
     depends_on:
       postgres:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy

@@ -6,9 +6,12 @@ import com.shizubro.cardcollection.dto.BulkDataDownloadInfoDto;
 import com.shizubro.cardcollection.dto.ScryfallCardDto;
 import com.shizubro.cardcollection.mapper.ScryfallCardMapper;
 import com.shizubro.cardcollection.model.ScryfallCard;
+import com.shizubro.cardcollection.publisher.ScryfallCardDataPublisher;
+import com.shizubro.cardcollection.receiver.ScryfallCardDataReceiver;
 import com.shizubro.cardcollection.repository.ScryfallCardRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -27,13 +30,15 @@ public class ScryfallBulkDataLoadService {
     private final ObjectMapper objectMapper;
     private final ScryfallCardMapper scryfallCardMapper;
     private final ScryfallCardRepository scryfallCardRepository;
+    private final ScryfallCardDataPublisher scryfallCardDataPublisher;
 
     @Autowired
-    public ScryfallBulkDataLoadService(RestTemplate restTemplate, ObjectMapper objectMapper, ScryfallCardMapper scryfallCardMapper, ScryfallCardRepository scryfallCardRepository) {
+    public ScryfallBulkDataLoadService(RestTemplate restTemplate, ObjectMapper objectMapper, ScryfallCardMapper scryfallCardMapper, ScryfallCardRepository scryfallCardRepository, ScryfallCardDataPublisher scryfallCardDataPublisher) {
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
         this.scryfallCardMapper = scryfallCardMapper;
         this.scryfallCardRepository = scryfallCardRepository;
+        this.scryfallCardDataPublisher = scryfallCardDataPublisher;
     }
 
     public BulkDataDownloadInfoDto getBulkDataDownloadInfo() {
@@ -55,12 +60,16 @@ public class ScryfallBulkDataLoadService {
 
             log.info("Fetching scryfall card dtos");
             List<ScryfallCardDto> scryfallCardDtos = this.getBulkCardDataFromJSON(bulkDataDownloadUri);
-            // TODO: send to persist through rabbitmq
             log.info("About to persist dtos");
             for (ScryfallCardDto cardDto: scryfallCardDtos) {
-                log.info("Persisting dto");
-                this.persistCardData(cardDto);
-                log.info("Persisted a dto");
+                log.info("Publishing dto");
+                boolean published = this.scryfallCardDataPublisher.publish(cardDto);
+                if (published) {
+                    log.info("Published a dto");
+                } else {
+                    log.error("Publish failed");
+                }
+                // TODO: enable all to run, don't return after just first one (testing purposes)
                 return;
             }
         }
