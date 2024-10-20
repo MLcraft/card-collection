@@ -2,6 +2,8 @@ package com.shizubro.cardcollection.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shizubro.cardcollection.cache.BulkDownloadInfoCache;
+import com.shizubro.cardcollection.cache.BulkDownloadInfoCacheRepository;
 import com.shizubro.cardcollection.dto.BulkDataDownloadInfoDto;
 import com.shizubro.cardcollection.dto.ScryfallCardDto;
 import com.shizubro.cardcollection.mapper.ScryfallCardMapper;
@@ -31,14 +33,16 @@ public class ScryfallBulkDataLoadService {
     private final ScryfallCardMapper scryfallCardMapper;
     private final ScryfallCardRepository scryfallCardRepository;
     private final ScryfallCardDataPublisher scryfallCardDataPublisher;
+    private final BulkDownloadInfoCacheRepository bulkDownloadInfoCacheRepository;
 
     @Autowired
-    public ScryfallBulkDataLoadService(RestTemplate restTemplate, ObjectMapper objectMapper, ScryfallCardMapper scryfallCardMapper, ScryfallCardRepository scryfallCardRepository, ScryfallCardDataPublisher scryfallCardDataPublisher) {
+    public ScryfallBulkDataLoadService(RestTemplate restTemplate, ObjectMapper objectMapper, ScryfallCardMapper scryfallCardMapper, ScryfallCardRepository scryfallCardRepository, ScryfallCardDataPublisher scryfallCardDataPublisher, BulkDownloadInfoCacheRepository bulkDownloadInfoCacheRepository) {
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
         this.scryfallCardMapper = scryfallCardMapper;
         this.scryfallCardRepository = scryfallCardRepository;
         this.scryfallCardDataPublisher = scryfallCardDataPublisher;
+        this.bulkDownloadInfoCacheRepository = bulkDownloadInfoCacheRepository;
     }
 
     public BulkDataDownloadInfoDto getBulkDataDownloadInfo() {
@@ -54,23 +58,32 @@ public class ScryfallBulkDataLoadService {
         if (latestBulkDataDownloadInfo == null) {
             log.error("bulk data response is null");
         } else {
-            // TODO: check cache for last updated bulk data
-            log.info("Fetching bulk data download uri");
-            String bulkDataDownloadUri = latestBulkDataDownloadInfo.downloadUri();
+            if (this.bulkDownloadInfoCacheRepository.existsBulkDownloadInfoCacheByUpdatedAt(latestBulkDataDownloadInfo.updatedAt())) {
+                log.info("No updates for current data necessary");
+            } else {
+                log.info("Saving data in cache");
+                BulkDownloadInfoCache bulkDownloadInfoCache = new BulkDownloadInfoCache();
+                bulkDownloadInfoCache.setDownloadUri(latestBulkDataDownloadInfo.downloadUri());
+                bulkDownloadInfoCache.setUpdatedAt(latestBulkDataDownloadInfo.updatedAt());
 
-            log.info("Fetching scryfall card dtos");
-            List<ScryfallCardDto> scryfallCardDtos = this.getBulkCardDataFromJSON(bulkDataDownloadUri);
-            log.info("About to persist dtos");
-            for (ScryfallCardDto cardDto: scryfallCardDtos) {
-                log.info("Publishing dto");
-                boolean published = this.scryfallCardDataPublisher.publish(cardDto);
-                if (published) {
-                    log.info("Published a dto");
-                } else {
-                    log.error("Publish failed");
+                this.bulkDownloadInfoCacheRepository.save(bulkDownloadInfoCache);
+                log.info("Fetching bulk data download uri");
+                String bulkDataDownloadUri = latestBulkDataDownloadInfo.downloadUri();
+
+                log.info("Fetching scryfall card dtos");
+                List<ScryfallCardDto> scryfallCardDtos = this.getBulkCardDataFromJSON(bulkDataDownloadUri);
+                log.info("About to persist dtos");
+                for (ScryfallCardDto cardDto: scryfallCardDtos) {
+                    log.info("Publishing dto");
+                    boolean published = this.scryfallCardDataPublisher.publish(cardDto);
+                    if (published) {
+                        log.info("Published a dto");
+                    } else {
+                        log.error("Publish failed");
+                    }
+                    // TODO: enable all to run, don't return after just first one (testing purposes)
+                    return;
                 }
-                // TODO: enable all to run, don't return after just first one (testing purposes)
-                return;
             }
         }
     }
