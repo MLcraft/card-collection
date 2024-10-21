@@ -73,6 +73,7 @@ public class ScryfallBulkDataLoadService {
                 log.info("Fetching scryfall card dtos");
                 List<ScryfallCardDto> scryfallCardDtos = this.getBulkCardDataFromJSON(bulkDataDownloadUri);
                 log.info("About to persist dtos");
+                // TODO: filter out alchemy and mtgo cards
                 for (ScryfallCardDto cardDto: scryfallCardDtos) {
                     log.info("Publishing dto");
                     boolean published = this.scryfallCardDataPublisher.publish(cardDto);
@@ -96,6 +97,7 @@ public class ScryfallBulkDataLoadService {
             log.error("error in format of download URI");
         } catch (IOException e) {
             log.error("error processing JSON download data");
+            log.error(e.getMessage());
         }
         return new ArrayList<>();
     }
