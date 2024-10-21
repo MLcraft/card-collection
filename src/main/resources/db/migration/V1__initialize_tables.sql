@@ -1,7 +1,10 @@
 CREATE TABLE scryfall_cards
 (
-    id   UUID         NOT NULL,
-    name VARCHAR(255) NOT NULL,
+    id               UUID         NOT NULL,
+    name             VARCHAR(255) NOT NULL,
+    setcode          VARCHAR(255) NOT NULL,
+    collector_number VARCHAR(255) NOT NULL,
+    image_uri        VARCHAR(255),
     CONSTRAINT pk_scryfall_cards PRIMARY KEY (id)
 );
 

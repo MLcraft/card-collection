@@ -20,4 +20,13 @@ public class ScryfallCard {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
+    private String setcode;
+
+    @Column(nullable = false)
+    private String collectorNumber;
+
+    @Column(nullable = true)
+    private String imageUri;
+
 }

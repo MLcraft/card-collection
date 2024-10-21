@@ -6,14 +6,18 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ScryfallCardMapper {
-    public ScryfallCardDto entityToDto(ScryfallCard card) {
-        return new ScryfallCardDto(card.getId(), card.getName());
-    }
 
     public ScryfallCard dtoToEntity(ScryfallCardDto dto) {
+        String cardImageUrl = null;
+        if (dto.getImageUris() != null) {
+            cardImageUrl = dto.getImageUris().getPng();
+        }
         ScryfallCard card = new ScryfallCard();
-        card.setId(dto.id());
-        card.setName(dto.name());
+        card.setId(dto.getId());
+        card.setName(dto.getName());
+        card.setSetcode(dto.getSetcode());
+        card.setCollectorNumber(dto.getCollectorNumber());
+        card.setImageUri(cardImageUrl);
         return card;
     }
 }
