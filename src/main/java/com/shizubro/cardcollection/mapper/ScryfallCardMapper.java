@@ -27,7 +27,6 @@ public class ScryfallCardMapper {
         card.setName(dto.getName());
         card.setSetcode(dto.getSetcode());
         card.setCollectorNumber(dto.getCollectorNumber());
-        // TODO: MDFCs and such can have card faces instead of just card image url so check for those as well and take front face if no image url
         card.setImageUri(cardImageUrl);
         return card;
     }

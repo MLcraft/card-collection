@@ -32,6 +32,7 @@ public class ScryfallCardDto {
 
     @Getter
     @Setter
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class ImageUris {
         @JsonProperty("small")
         private String small;
@@ -54,6 +55,7 @@ public class ScryfallCardDto {
 
     @Getter
     @Setter
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class CardFaces {
 
         @JsonProperty("image_uris")
