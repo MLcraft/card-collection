@@ -1,16 +1,10 @@
-package com.shizubro.cardcollection.dto;
+package com.shizubro.cardcollection.dto.requests;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.shizubro.cardcollection.model.ScryfallCard;
-import com.shizubro.cardcollection.model.User;
-import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
-public class UserCardEntryDto {
-    @JsonProperty("id")
-    private String id;
-
+public class LendCardsFromOwnerToUserRequestDto {
     @JsonProperty("card_id")
     private String cardId;
 
@@ -21,5 +15,5 @@ public class UserCardEntryDto {
     private String borrowerId;
 
     @JsonProperty("count")
-    private int count;
+    private Long count;
 }
