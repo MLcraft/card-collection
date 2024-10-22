@@ -26,7 +26,7 @@ public class CardBorrowerService {
     }
 
     public UserCardEntry lendCardFromOwnerToUser(UUID ownerId, UUID borrowerId, UUID scryfallCardId, Long count) {
-        UserCardEntry existingCardEntry = this.userCardEntryRepository.findUserCardEntryByOwnerAndBorrowerAndCard(ownerId, borrowerId, scryfallCardId);
+        UserCardEntry existingCardEntry = this.userCardEntryRepository.findUserCardEntryByOwnerIdAndBorrowerIdAndCardId(ownerId, borrowerId, scryfallCardId);
         if (existingCardEntry != null) {
             existingCardEntry.setCount(existingCardEntry.getCount() + count);
             return this.userCardEntryRepository.save(existingCardEntry);
