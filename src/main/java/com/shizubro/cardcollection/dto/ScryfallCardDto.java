@@ -24,6 +24,12 @@ public class ScryfallCardDto {
     @JsonProperty("collector_number")
     private String collectorNumber;
 
+    @JsonProperty("digital")
+    private Boolean isDigital;
+
+    @JsonProperty("multiverse_ids")
+    private List<Integer> multiverseIds;
+
     @JsonProperty("image_uris")
     private ImageUris imageUris;
 

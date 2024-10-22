@@ -74,6 +74,10 @@ public class ScryfallBulkDataLoadService {
                 List<ScryfallCardDto> scryfallCardDtos = this.getBulkCardDataFromJSON(bulkDataDownloadUri);
                 log.info("About to persist dtos");
                 // TODO: filter out alchemy and mtgo cards
+                scryfallCardDtos.removeIf(ScryfallCardDto::getIsDigital);
+                log.info("Removed digital only cards");
+                scryfallCardDtos.removeIf(c -> c.getMultiverseIds().isEmpty());
+                log.info("Removed tokens and art cards");
                 for (ScryfallCardDto cardDto: scryfallCardDtos) {
                     log.info("Publishing dto");
                     boolean published = this.scryfallCardDataPublisher.publish(cardDto);
@@ -83,7 +87,7 @@ public class ScryfallBulkDataLoadService {
                         log.error("Publish failed");
                     }
                     // TODO: enable all to run, don't return after just first one (testing purposes)
-                    return;
+                   return;
                 }
             }
         }
@@ -92,7 +96,7 @@ public class ScryfallBulkDataLoadService {
     public List<ScryfallCardDto> getBulkCardDataFromJSON(String bulkDataDownloadUri) {
         try {
             URL downloadUrl = new URL(bulkDataDownloadUri);
-            return Arrays.asList(objectMapper.readValue(downloadUrl, ScryfallCardDto[].class));
+            return new ArrayList<>(Arrays.asList(objectMapper.readValue(downloadUrl, ScryfallCardDto[].class)));
         } catch (MalformedURLException e) {
             log.error("error in format of download URI");
         } catch (IOException e) {
