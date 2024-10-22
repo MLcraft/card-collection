@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class UserCardEntryDto {
     @JsonProperty("id")
-    private String id;
+    private Long id;
 
     @JsonProperty("card_id")
     private String cardId;
@@ -21,5 +21,5 @@ public class UserCardEntryDto {
     private String borrowerId;
 
     @JsonProperty("count")
-    private int count;
+    private Long count;
 }
