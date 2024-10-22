@@ -14,7 +14,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.UUID;
 
 @Slf4j
-@RestController("/lending")
+@RestController()
+@RequestMapping("/lending")
 public class CardBorrowerController {
     private final CardBorrowerService cardBorrowerService;
 
