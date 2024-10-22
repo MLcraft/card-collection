@@ -35,18 +35,19 @@ public class CardBorrowerController {
         }
         return "lendCardsFromOwnerToUser";
     }
-//
-//    @PostMapping("/return")
-//    public String returnCardsToOwner() {
-//        try {
-//            this.cardBorrowerService.returnCardFromUserToOwner();
-//        } catch (Exception e) {
-//            log.error("Exception occurred in returnCardFromUserToOwner");
-//            log.error(e.getMessage());
-//            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An error occured while processing the request\n");
-//        }
-//    }
-//
+
+    @PostMapping("/return")
+    public String returnCardsFromUserToOwner(@RequestBody LendCardsFromOwnerToUserRequestDto requestDto) {
+        try {
+            this.cardBorrowerService.returnCardFromUserToOwner(UUID.fromString(requestDto.getOwnerId()), UUID.fromString(requestDto.getBorrowerId()), UUID.fromString(requestDto.getCardId()), requestDto.getCount());
+        } catch (Exception e) {
+            log.error("Exception occurred in returnCardsFromUserToOwner");
+            log.error(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An error occured while processing the request\n");
+        }
+        return "returnCardsFromUserToOwner";
+    }
+
 //    @PostMapping("/transfer")
 //    public String lendCardsFromBorrowerToOtherUser() {
 //        try {
@@ -57,7 +58,7 @@ public class CardBorrowerController {
 //            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An error occured while processing the request\n");
 //        }
 //    }
-//
+
 //    @GetMapping("/lentCards")
 //    public List<UserCardEntryDto> getCardsLentByOwner() {
 //        try {
@@ -68,7 +69,7 @@ public class CardBorrowerController {
 //            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An error occured while processing the request\n");
 //        }
 //    }
-//
+
 //    @GetMapping("/borrowedCards")
 //    public List<UserCardEntryDto> getCardsBorrowedByUser() {
 //        try {

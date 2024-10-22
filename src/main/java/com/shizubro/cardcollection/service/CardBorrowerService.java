@@ -6,12 +6,14 @@ import com.shizubro.cardcollection.model.UserCardEntry;
 import com.shizubro.cardcollection.repository.ScryfallCardRepository;
 import com.shizubro.cardcollection.repository.UserCardEntryRepository;
 import com.shizubro.cardcollection.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class CardBorrowerService {
     private final UserCardEntryRepository userCardEntryRepository;
@@ -25,39 +27,46 @@ public class CardBorrowerService {
         this.scryfallCardRepository = scryfallCardRepository;
     }
 
-    public UserCardEntry lendCardFromOwnerToUser(UUID ownerId, UUID borrowerId, UUID scryfallCardId, Long count) {
-        UserCardEntry existingCardEntry = this.userCardEntryRepository.findUserCardEntryByOwnerIdAndBorrowerIdAndCardId(ownerId, borrowerId, scryfallCardId);
-        if (existingCardEntry != null) {
-            existingCardEntry.setCount(existingCardEntry.getCount() + count);
-            return this.userCardEntryRepository.save(existingCardEntry);
+    public void lendCardFromOwnerToUser(UUID ownerId, UUID borrowerId, UUID scryfallCardId, Long count) {
+        UserCardEntry cardEntry = this.userCardEntryRepository.findUserCardEntryByOwnerIdAndBorrowerIdAndCardId(ownerId, borrowerId, scryfallCardId);
+        if (cardEntry != null) {
+            cardEntry.setCount(cardEntry.getCount() + count);
         } else {
-            UserCardEntry newCardEntry = new UserCardEntry();
+            cardEntry = new UserCardEntry();
             Optional<ScryfallCard> cardToLend = this.scryfallCardRepository.findById(scryfallCardId);
             Optional<User> borrowerUser = this.userRepository.findById(borrowerId);
             Optional<User> ownerUser = this.userRepository.findById(ownerId);
 
-            newCardEntry.setCard(cardToLend.orElseThrow());
-            newCardEntry.setBorrower(borrowerUser.orElseThrow());
-            newCardEntry.setOwner(ownerUser.orElseThrow());
-            newCardEntry.setCount(count);
-
-            return this.userCardEntryRepository.save(newCardEntry);
+            cardEntry.setCard(cardToLend.orElseThrow());
+            cardEntry.setBorrower(borrowerUser.orElseThrow());
+            cardEntry.setOwner(ownerUser.orElseThrow());
+            cardEntry.setCount(count);
+        }
+        this.userCardEntryRepository.save(cardEntry);
+    }
+//
+    public void returnCardFromUserToOwner(UUID ownerId, UUID borrowerId, UUID scryfallCardId, Long count) {
+        UserCardEntry existingCardEntry = this.userCardEntryRepository.findUserCardEntryByOwnerIdAndBorrowerIdAndCardId(ownerId, borrowerId, scryfallCardId);
+        if (existingCardEntry != null) {
+            Long remainingCount = existingCardEntry.getCount() - count;
+            if (remainingCount <= 0L) {
+                this.userCardEntryRepository.delete(existingCardEntry);
+            } else {
+                existingCardEntry.setCount(remainingCount);
+                this.userCardEntryRepository.save(existingCardEntry);
+            }
         }
     }
 //
-//    public void returnCardFromUserToOwner(UUID borrower_id, UUID owner_id, UUID scryfallCardId, Long count) {
+//    public void lendCardFromNonOwnerToUser(UUID ownerId, UUID lenderId, UUID borrowerId, UUID scryfallCardId, Long count) {
 //
 //    }
 //
-//    public void lendCardFromNonOwnerToUser(UUID owner_id, UUID lender_id, UUID borrower_id, UUID scryfallCardId, Long count) {
+//    public List<UserCardEntryDto> getLentOutCardsForOwner(UUID ownerId) {
 //
 //    }
 //
-//    public List<UserCardEntryDto> getLentOutCardsForOwner(UUID owner_id) {
-//
-//    }
-//
-//    public List<UserCardEntryDto> getCardsBorrowedByUser(UUID borrower_id) {
+//    public List<UserCardEntryDto> getCardsBorrowedByUser(UUID borrowerId) {
 //
 //    }
 }
