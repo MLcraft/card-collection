@@ -15,4 +15,5 @@ public interface UserCardEntryRepository extends JpaRepository<UserCardEntry, Lo
   List<UserCardEntry> findAllByOwnerId(UUID ownerId);
   List<UserCardEntry> findAllByBorrowerId(UUID borrowerId);
   List<UserCardEntry> findByCardIdAndOwnerId(UUID cardId, UUID ownerId);
+  UserCardEntry findUserCardEntryByOwnerAndBorrowerAndCard(UUID ownerId, UUID borrowerId, UUID cardId);
 }

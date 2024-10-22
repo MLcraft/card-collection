@@ -14,7 +14,7 @@ CREATE TABLE user_card_entries
     card_id     UUID,
     owner_id    UUID,
     borrower_id UUID,
-    count       INTEGER,
+    count       BIGINT,
     CONSTRAINT pk_user_card_entries PRIMARY KEY (id)
 );
 

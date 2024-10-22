@@ -26,5 +26,5 @@ public class UserCardEntry {
     private User borrower;
 
     @Column()
-    private int count;
+    private Long count;
 }

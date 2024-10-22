@@ -23,8 +23,8 @@ public class CardBorrowerController {
         this.cardBorrowerService = cardBorrowerService;
     }
 
-//    @PostMapping("/lend")
-//    public String lendCardsFromOwnerToUser() {
+    @PostMapping("/lend")
+    public String lendCardsFromOwnerToUser() {
 //        try {
 //            this.cardBorrowerService.lendCardFromOwnerToUser();
 //        } catch (Exception e) {
@@ -32,7 +32,8 @@ public class CardBorrowerController {
 //            log.error(e.getMessage());
 //            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An error occured while processing the request\n");
 //        }
-//    }
+        return "lendCardsFromOwnerToUser";
+    }
 //
 //    @PostMapping("/return")
 //    public String returnCardsToOwner() {
