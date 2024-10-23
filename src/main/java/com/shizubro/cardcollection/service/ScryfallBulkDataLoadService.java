@@ -73,7 +73,6 @@ public class ScryfallBulkDataLoadService {
                 log.info("Fetching scryfall card dtos");
                 List<ScryfallCardDto> scryfallCardDtos = this.getBulkCardDataFromJSON(bulkDataDownloadUri);
                 log.info("About to persist dtos");
-                // TODO: filter out alchemy and mtgo cards
                 scryfallCardDtos.removeIf(ScryfallCardDto::getIsDigital);
                 log.info("Removed digital only cards");
                 scryfallCardDtos.removeIf(c -> c.getMultiverseIds().isEmpty());
