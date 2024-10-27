@@ -2,6 +2,7 @@ package com.shizubro.cardcollection.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.shizubro.cardcollection.enums.Layout;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,8 +28,8 @@ public class ScryfallCardDto {
     @JsonProperty("digital")
     private Boolean isDigital;
 
-    @JsonProperty("multiverse_ids")
-    private List<Integer> multiverseIds;
+    @JsonProperty("layout")
+    private Layout layout;
 
     @JsonProperty("image_uris")
     private ImageUris imageUris;

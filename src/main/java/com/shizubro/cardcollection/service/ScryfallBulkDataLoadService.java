@@ -6,6 +6,7 @@ import com.shizubro.cardcollection.cache.BulkDownloadInfoCache;
 import com.shizubro.cardcollection.cache.BulkDownloadInfoCacheRepository;
 import com.shizubro.cardcollection.dto.BulkDataDownloadInfoDto;
 import com.shizubro.cardcollection.dto.ScryfallCardDto;
+import com.shizubro.cardcollection.enums.Layout;
 import com.shizubro.cardcollection.mapper.ScryfallCardMapper;
 import com.shizubro.cardcollection.model.ScryfallCard;
 import com.shizubro.cardcollection.publisher.ScryfallCardDataPublisher;
@@ -23,6 +24,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -34,6 +36,8 @@ public class ScryfallBulkDataLoadService {
     private final ScryfallCardRepository scryfallCardRepository;
     private final ScryfallCardDataPublisher scryfallCardDataPublisher;
     private final BulkDownloadInfoCacheRepository bulkDownloadInfoCacheRepository;
+
+    private final List<Layout> invalidLayouts = List.of(Layout.PLANAR, Layout.SCHEME, Layout.VANGUARD, Layout.TOKEN, Layout.DFTOKEN, Layout.EMBLEM, Layout.ARTSERIES);
 
     @Autowired
     public ScryfallBulkDataLoadService(RestTemplate restTemplate, ObjectMapper objectMapper, ScryfallCardMapper scryfallCardMapper, ScryfallCardRepository scryfallCardRepository, ScryfallCardDataPublisher scryfallCardDataPublisher, BulkDownloadInfoCacheRepository bulkDownloadInfoCacheRepository) {
@@ -75,7 +79,7 @@ public class ScryfallBulkDataLoadService {
                 log.info("About to persist dtos");
                 scryfallCardDtos.removeIf(ScryfallCardDto::getIsDigital);
                 log.info("Removed digital only cards");
-                scryfallCardDtos.removeIf(c -> c.getMultiverseIds().isEmpty());
+                scryfallCardDtos.removeIf(c -> this.invalidLayouts.contains(c.getLayout()));
                 log.info("Removed tokens and art cards");
                 for (ScryfallCardDto cardDto: scryfallCardDtos) {
                     log.info("Publishing dto");
