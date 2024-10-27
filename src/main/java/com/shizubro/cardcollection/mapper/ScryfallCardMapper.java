@@ -1,6 +1,7 @@
 package com.shizubro.cardcollection.mapper;
 
 import com.shizubro.cardcollection.dto.ScryfallCardDto;
+import com.shizubro.cardcollection.dto.responses.ScryfallCardResponseDto;
 import com.shizubro.cardcollection.model.ScryfallCard;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -29,5 +30,16 @@ public class ScryfallCardMapper {
         card.setCollectorNumber(dto.getCollectorNumber());
         card.setImageUri(cardImageUrl);
         return card;
+    }
+
+    public ScryfallCardResponseDto entityToResponseDto(ScryfallCard entity) {
+        ScryfallCardResponseDto dto = new ScryfallCardResponseDto();
+        dto.setId(entity.getId().toString());
+        dto.setName(entity.getName());
+        dto.setSetCode(entity.getSetcode());
+        dto.setCollectorNumber(entity.getCollectorNumber());
+        dto.setCardImageUrl(entity.getImageUri());
+
+        return dto;
     }
 }

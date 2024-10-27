@@ -17,6 +17,9 @@ public class UserCardEntry {
     @JoinColumn(name= "card_id")
     private ScryfallCard card;
 
+    @Column(name= "is_foil")
+    private Boolean isFoil = false;
+
     @ManyToOne()
     @JoinColumn(name= "owner_id")
     private User owner;

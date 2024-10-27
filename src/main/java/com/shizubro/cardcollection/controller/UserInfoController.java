@@ -1,5 +1,6 @@
 package com.shizubro.cardcollection.controller;
 
+import com.shizubro.cardcollection.dto.responses.UserInfoResponseDto;
 import com.shizubro.cardcollection.service.UserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +16,9 @@ public class UserInfoController {
     }
 
     @GetMapping("/getUserByDiscord/{discordId}")
-    public String getUserIdByDiscordId(@PathVariable Long discordId) {
-        return this.userInfoService.getOrCreateUserIdByDiscordId(discordId).toString();
+    public UserInfoResponseDto getUserIdByDiscordId(@PathVariable Long discordId) {
+        UserInfoResponseDto userInfoResponse = new UserInfoResponseDto();
+        userInfoResponse.setUserId(this.userInfoService.getOrCreateUserIdByDiscordId(discordId).toString());
+        return userInfoResponse;
     }
 }

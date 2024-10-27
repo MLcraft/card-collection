@@ -1,7 +1,9 @@
 package com.shizubro.cardcollection.controller;
 
-import com.shizubro.cardcollection.dto.UserCardEntryDto;
-import com.shizubro.cardcollection.dto.requests.LendCardsFromOwnerToUserRequestDto;
+import com.shizubro.cardcollection.dto.responses.UserCardEntryResponseDto;
+import com.shizubro.cardcollection.dto.requests.LendCardsRequestDto;
+import com.shizubro.cardcollection.mapper.UserCardEntryMapper;
+import com.shizubro.cardcollection.model.UserCardEntry;
 import com.shizubro.cardcollection.service.CardBorrowerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,14 +20,16 @@ import java.util.UUID;
 @RequestMapping("/lending")
 public class CardBorrowerController {
     private final CardBorrowerService cardBorrowerService;
+    private final UserCardEntryMapper userCardEntryMapper;
 
     @Autowired
-    public CardBorrowerController(CardBorrowerService cardBorrowerService) {
+    public CardBorrowerController(CardBorrowerService cardBorrowerService, UserCardEntryMapper userCardEntryMapper) {
         this.cardBorrowerService = cardBorrowerService;
+        this.userCardEntryMapper = userCardEntryMapper;
     }
 
     @PostMapping("/lend")
-    public String lendCardsFromOwnerToUser(@RequestBody LendCardsFromOwnerToUserRequestDto requestDto) {
+    public String lendCardsFromOwnerToUser(@RequestBody LendCardsRequestDto requestDto) {
         try {
             this.cardBorrowerService.lendCardFromOwnerToUser(UUID.fromString(requestDto.getOwnerId()), UUID.fromString(requestDto.getBorrowerId()), UUID.fromString(requestDto.getCardId()), requestDto.getCount());
         } catch (Exception e) {
@@ -36,7 +41,7 @@ public class CardBorrowerController {
     }
 
     @PostMapping("/return")
-    public String returnCardsFromUserToOwner(@RequestBody LendCardsFromOwnerToUserRequestDto requestDto) {
+    public String returnCardsFromUserToOwner(@RequestBody LendCardsRequestDto requestDto) {
         try {
             this.cardBorrowerService.returnCardFromUserToOwner(UUID.fromString(requestDto.getOwnerId()), UUID.fromString(requestDto.getBorrowerId()), UUID.fromString(requestDto.getCardId()), requestDto.getCount());
         } catch (Exception e) {
@@ -59,9 +64,12 @@ public class CardBorrowerController {
 //    }
 
     @GetMapping("/lentCards/{ownerId}")
-    public List<UserCardEntryDto> getCardsLentByOwner(@PathVariable String ownerId) {
+    public List<UserCardEntryResponseDto> getCardsLentByOwner(@PathVariable String ownerId) {
         try {
-            return this.cardBorrowerService.getLentOutCardsForOwner(UUID.fromString(ownerId));
+            List<UserCardEntry> userCardEntries = this.cardBorrowerService.getLentOutCardsForOwner(UUID.fromString(ownerId));
+            List<UserCardEntryResponseDto> userCardEntryDtos = new ArrayList<>();
+            userCardEntries.forEach(u -> userCardEntryDtos.add(this.userCardEntryMapper.entityToResponseDto(u)));
+            return userCardEntryDtos;
         } catch (Exception e) {
             log.error("Exception occurred in getLentOutCardsForOwner");
             log.error(e.getMessage());
@@ -70,9 +78,12 @@ public class CardBorrowerController {
     }
 
     @GetMapping("/borrowedCards/{borrowerId}")
-    public List<UserCardEntryDto> getCardsBorrowedByUser(@PathVariable String borrowerId) {
+    public List<UserCardEntryResponseDto> getCardsBorrowedByUser(@PathVariable String borrowerId) {
         try {
-            return this.cardBorrowerService.getCardsBorrowedByUser(UUID.fromString(borrowerId));
+            List<UserCardEntry> userCardEntries = this.cardBorrowerService.getCardsBorrowedByUser(UUID.fromString(borrowerId));
+            List<UserCardEntryResponseDto> userCardEntryDtos = new ArrayList<>();
+            userCardEntries.forEach(u -> userCardEntryDtos.add(this.userCardEntryMapper.entityToResponseDto(u)));
+            return userCardEntryDtos;
         } catch (Exception e) {
             log.error("Exception occurred in getCardsBorrowedByUser");
             log.error(e.getMessage());
