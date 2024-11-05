@@ -5,6 +5,8 @@ import com.shizubro.cardcollection.service.UserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController()
 @RequestMapping("/users")
 public class UserInfoController {
@@ -18,7 +20,14 @@ public class UserInfoController {
     @GetMapping("/getUserByDiscord/{discordId}")
     public UserInfoResponseDto getUserIdByDiscordId(@PathVariable Long discordId) {
         UserInfoResponseDto userInfoResponse = new UserInfoResponseDto();
-        userInfoResponse.setUserId(this.userInfoService.getOrCreateUserIdByDiscordId(discordId).toString());
+        userInfoResponse.setId(this.userInfoService.getOrCreateUserIdByDiscordId(discordId).toString());
+        return userInfoResponse;
+    }
+
+    @GetMapping("/getDiscordByUser/{userId}")
+    public UserInfoResponseDto getDiscordIdByUserId(@PathVariable UUID userId) {
+        UserInfoResponseDto userInfoResponse = new UserInfoResponseDto();
+        userInfoResponse.setId(this.userInfoService.getDiscordIdByUserId(userId).toString());
         return userInfoResponse;
     }
 }

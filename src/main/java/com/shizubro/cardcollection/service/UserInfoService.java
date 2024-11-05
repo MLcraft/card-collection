@@ -33,4 +33,14 @@ public class UserInfoService {
         return foundUser.getId();
 
     }
+
+    public Long getDiscordIdByUserId(UUID userId) {
+        User foundUser = this.userRepository.getUserById(userId);
+        if (foundUser == null) {
+            log.info("No users found for given discordId");
+            throw new RuntimeException("No users found for given discordId");
+        }
+        return foundUser.getDiscordId();
+
+    }
 }

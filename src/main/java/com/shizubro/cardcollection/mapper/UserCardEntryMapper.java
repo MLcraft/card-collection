@@ -10,9 +10,12 @@ public class UserCardEntryMapper {
         UserCardEntryResponseDto cardEntryDto = new UserCardEntryResponseDto();
 
         cardEntryDto.setId(entity.getId());
-        cardEntryDto.setCardId(entity.getCard().getId().toString());
-        cardEntryDto.setOwnerId(entity.getOwner().getId().toString());
-        cardEntryDto.setBorrowerId(entity.getBorrower().getId().toString());
+        cardEntryDto.setCardName(entity.getCard().getName());
+        cardEntryDto.setCardSetCode(entity.getCard().getSetcode());
+        cardEntryDto.setCardNumber(entity.getCard().getCollectorNumber());
+        cardEntryDto.setCardImageUrl(entity.getCard().getImageUri());
+        cardEntryDto.setOwnerId(entity.getOwner().getDiscordId().toString());
+        cardEntryDto.setBorrowerId(entity.getBorrower().getDiscordId().toString());
         cardEntryDto.setCount(entity.getCount());
 
         return cardEntryDto;

@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Repository
 public interface ScryfallCardRepository extends JpaRepository<ScryfallCard, UUID> {
-    @Query("SELECT c FROM ScryfallCard  c WHERE (:name is null or LOWER(c.name) = LOWER(:name)) and (:setcode is null"
-            + " or LOWER(c.setcode) = LOWER(:setcode)) and (:cnumber is null or LOWER(c.collectorNumber) = LOWER(:cnumber))")
+    @Query("SELECT c FROM ScryfallCard  c WHERE (LOWER(c.name) = LOWER(:name) or :name is null) and (LOWER(c.setcode) = LOWER(:setcode)"
+            + " or :setcode is null) and (LOWER(c.collectorNumber) = LOWER(:cnumber) or :cnumber is null)")
     List<ScryfallCard> findScryfallCardByCardFilters(@Param("name") String name, @Param("setcode") String setcode, @Param("cnumber") String cnumber);
 }

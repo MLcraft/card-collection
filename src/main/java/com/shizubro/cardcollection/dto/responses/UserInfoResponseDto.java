@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 public class UserInfoResponseDto {
     @JsonProperty("id")
-    private String userId;
+    private String id;
 }

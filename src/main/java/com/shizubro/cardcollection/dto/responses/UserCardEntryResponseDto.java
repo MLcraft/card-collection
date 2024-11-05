@@ -8,8 +8,17 @@ public class UserCardEntryResponseDto {
     @JsonProperty("id")
     private Long id;
 
-    @JsonProperty("card_id")
-    private String cardId;
+    @JsonProperty("card_name")
+    private String cardName;
+
+    @JsonProperty("card_set_code")
+    private String cardSetCode;
+
+    @JsonProperty("card_number")
+    private String cardNumber;
+
+    @JsonProperty("card_image_url")
+    private String cardImageUrl;
 
     @JsonProperty("owner_id")
     private String ownerId;
