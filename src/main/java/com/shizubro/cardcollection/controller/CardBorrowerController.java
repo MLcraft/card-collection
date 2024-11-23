@@ -5,6 +5,12 @@ import com.shizubro.cardcollection.dto.requests.LendCardsRequestDto;
 import com.shizubro.cardcollection.mapper.UserCardEntryMapper;
 import com.shizubro.cardcollection.model.UserCardEntry;
 import com.shizubro.cardcollection.service.CardBorrowerService;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +34,12 @@ public class CardBorrowerController {
         this.userCardEntryMapper = userCardEntryMapper;
     }
 
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = { @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = String.class)) }),
+            @ApiResponse(responseCode = "500", description = "Error occured while lending cards",
+                    content = @Content) })
+    @Tag(name = "POST card lending operations", description = "POST methods of Card Lender/Borrower APIs")
     @PostMapping("/lend")
     public String lendCardsFromOwnerToUser(@RequestBody LendCardsRequestDto requestDto) {
         try {
@@ -40,6 +52,12 @@ public class CardBorrowerController {
         return "lendCardsFromOwnerToUser";
     }
 
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = { @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = String.class)) }),
+            @ApiResponse(responseCode = "500", description = "Error occured while returning borrowed cards",
+                    content = @Content) })
+    @Tag(name = "POST card lending operations", description = "POST methods of Card Lender/Borrower APIs")
     @PostMapping("/return")
     public String returnCardsFromUserToOwner(@RequestBody LendCardsRequestDto requestDto) {
         try {
@@ -62,7 +80,12 @@ public class CardBorrowerController {
 //            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An error occured while processing the request\n");
 //        }
 //    }
-
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", content = { @Content(mediaType = "application/json",
+                array = @ArraySchema(schema = @Schema(implementation = UserCardEntryResponseDto.class))) }),
+        @ApiResponse(responseCode = "500", description = "Error occured while listing cards lent out by user",
+                content = @Content) })
+    @Tag(name = "GET card lending info", description = "GET methods of Card Lender/Borrower APIs")
     @GetMapping("/lentCards/{ownerId}")
     public List<UserCardEntryResponseDto> getCardsLentByOwner(@PathVariable String ownerId) {
         try {
@@ -77,6 +100,12 @@ public class CardBorrowerController {
         }
     }
 
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = { @Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = UserCardEntryResponseDto.class))) }),
+            @ApiResponse(responseCode = "500", description = "Error occured while listing cards borrowed by user",
+                    content = @Content) })
+    @Tag(name = "GET card lending info", description = "GET methods of Card Lender/Borrower APIs")
     @GetMapping("/borrowedCards/{borrowerId}")
     public List<UserCardEntryResponseDto> getCardsBorrowedByUser(@PathVariable String borrowerId) {
         try {
@@ -91,8 +120,8 @@ public class CardBorrowerController {
         }
     }
 
-    @RequestMapping("/")
-    public String index() {
-        return "hello world";
-    }
+//    @RequestMapping("/")
+//    public String index() {
+//        return "hello world";
+//    }
 }
