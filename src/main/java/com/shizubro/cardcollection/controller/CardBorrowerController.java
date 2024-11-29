@@ -45,8 +45,7 @@ public class CardBorrowerController {
         try {
             this.cardBorrowerService.lendCardFromOwnerToUser(UUID.fromString(requestDto.getOwnerId()), UUID.fromString(requestDto.getBorrowerId()), UUID.fromString(requestDto.getCardId()), requestDto.getCount());
         } catch (Exception e) {
-            log.error("Exception occurred in lendCardsFromOwnerToUser");
-            log.error(e.getMessage());
+            log.error("Exception occurred in lendCardsFromOwnerToUser", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An error occured while processing the request\n");
         }
         return "lendCardsFromOwnerToUser";
@@ -63,23 +62,12 @@ public class CardBorrowerController {
         try {
             this.cardBorrowerService.returnCardFromUserToOwner(UUID.fromString(requestDto.getOwnerId()), UUID.fromString(requestDto.getBorrowerId()), UUID.fromString(requestDto.getCardId()), requestDto.getCount());
         } catch (Exception e) {
-            log.error("Exception occurred in returnCardsFromUserToOwner");
-            log.error(e.getMessage());
+            log.error("Exception occurred in returnCardsFromUserToOwner", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An error occured while processing the request\n");
         }
         return "returnCardsFromUserToOwner";
     }
 
-//    @PostMapping("/transfer")
-//    public String lendCardsFromBorrowerToOtherUser() {
-//        try {
-//            this.cardBorrowerService.lendCardFromNonOwnerToUser();
-//        } catch (Exception e) {
-//            log.error("Exception occurred in lendCardFromNonOwnerToUser");
-//            log.error(e.getMessage());
-//            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An error occured while processing the request\n");
-//        }
-//    }
     @ApiResponses({
         @ApiResponse(responseCode = "200", content = { @Content(mediaType = "application/json",
                 array = @ArraySchema(schema = @Schema(implementation = UserCardEntryResponseDto.class))) }),
@@ -94,8 +82,7 @@ public class CardBorrowerController {
             userCardEntries.forEach(u -> userCardEntryDtos.add(this.userCardEntryMapper.entityToResponseDto(u)));
             return userCardEntryDtos;
         } catch (Exception e) {
-            log.error("Exception occurred in getLentOutCardsForOwner");
-            log.error(e.getMessage());
+            log.error("Exception occurred in getLentOutCardsForOwner", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An error occured while processing the request\n");
         }
     }
@@ -114,14 +101,8 @@ public class CardBorrowerController {
             userCardEntries.forEach(u -> userCardEntryDtos.add(this.userCardEntryMapper.entityToResponseDto(u)));
             return userCardEntryDtos;
         } catch (Exception e) {
-            log.error("Exception occurred in getCardsBorrowedByUser");
-            log.error(e.getMessage());
+            log.error("Exception occurred in getCardsBorrowedByUser", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An error occured while processing the request\n");
         }
     }
-
-//    @RequestMapping("/")
-//    public String index() {
-//        return "hello world";
-//    }
 }

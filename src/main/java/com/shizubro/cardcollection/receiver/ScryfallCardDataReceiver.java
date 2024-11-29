@@ -22,7 +22,7 @@ public class ScryfallCardDataReceiver {
     }
 
     public void handle(@NotNull final Message<ScryfallCardDto> message) {
-        log.info("Consume a message from queue");
+//        log.info("Consume a message from queue");
         scryfallService.persistCardData(message.getPayload());
     }
 

@@ -82,15 +82,15 @@ public class ScryfallBulkDataLoadService {
                 scryfallCardDtos.removeIf(c -> this.invalidLayouts.contains(c.getLayout()));
                 log.info("Removed tokens and art cards");
                 for (ScryfallCardDto cardDto: scryfallCardDtos) {
-                    log.info("Publishing dto");
+//                    log.info("Publishing dto");
                     boolean published = this.scryfallCardDataPublisher.publish(cardDto);
                     if (published) {
-                        log.info("Published a dto");
+//                        log.info("Published a dto");
                     } else {
                         log.error("Publish failed");
                     }
                     // TODO: enable all to run, don't return after just first one (testing purposes)
-                   return;
+//                   return;
                 }
             }
         }

@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController()
@@ -40,16 +42,15 @@ public class ScryfallCardSearchController {
                     content = @Content) })
     @Tag(name = "POST scryfall API card search", description = "POST methods to search external Scryfall card data APIs")
     @PostMapping("/search")
-    public List<ScryfallCardResponseDto> searchScryfallCards(@RequestBody SearchScryfallCardsRequestDto requestDto) {
+    public List<ScryfallCardResponseDto> searchScryfallCards(@Valid @RequestBody SearchScryfallCardsRequestDto requestDto) {
         try {
             List<ScryfallCard> searchResults = this.scryfallCardSearchService.searchScryfallCardByNameSetNumber(requestDto.getName(), requestDto.getSetCode(), requestDto.getCollectorNumber());
-            List<ScryfallCardResponseDto> scryfallCardResponseDtos = new ArrayList<>();
-            searchResults.forEach(u -> scryfallCardResponseDtos.add(this.scryfallCardMapper.entityToResponseDto(u)));
-            return scryfallCardResponseDtos;
+            return searchResults.stream()
+                    .map(scryfallCardMapper::entityToResponseDto)
+                    .collect(Collectors.toList());
 
         } catch (Exception e) {
-            log.error("Exception occurred in searchScryfallCards");
-            log.error(e.getMessage());
+            log.error("Exception occurred in searchScryfallCards", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An error occured while processing the request\n");
         }
     }
