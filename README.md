@@ -1,6 +1,6 @@
 # MTG Card Collection Manager
 
-Backend REST API component for [card-lender-bot](https://github.com/MLcraft/card-lender-bot)
+Backend REST API component for [card-lender-bot](https://github.com/MLcraft/card-lender-bot). Includes functionality to track borrowing and lending of Magic: the Gathering cards between Discord users.
 
 Written in Java 17 using Springboot with PostgreSQL, Redis, and RabbitMQ, containerized with Docker Compose
 
